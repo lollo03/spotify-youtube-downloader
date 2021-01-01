@@ -1,0 +1,8 @@
+lyricsgenius @ git+https://github.com/johnwmillr/LyricsGenius.git@47109a3e18b258da8835c52402f3b55347506176
+moviepy==1.0.3
+pytube @ git+https://github.com/nficano/pytube@164ce5e435813e2018ede4a488ddd3c1f6731f28
+requests==2.25.0
+spotipy==2.16.1
+youtube-dl==2020.12.31
+youtube-search-python==1.3.4
+progress==1.5
