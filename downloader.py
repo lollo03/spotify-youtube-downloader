@@ -8,10 +8,12 @@ import json
 import base64
 from moviepy.editor import *
 import os
+import sys
+from mp3_tagger import MP3File, VERSION_BOTH
 
 path = os.path.abspath("pl-downloader")
-client_id = "INSERT HERE"
-client_secret = "INSERT HERE"
+client_id = INSERT CLIENT ID
+client_secret = INSERT CLIENT SECRET
 
 async def get_playlist(id):
     auth = client_id + ":" + client_secret
@@ -31,9 +33,11 @@ async def get_playlist(id):
         if len(songs[i]["track"]["artists"]) > 1:
             for j in range(0, len(songs[i]["track"]["artists"])):
                 if j == 0:
-                    artista = songs[i]["track"]["artists"][j]["name"] + " feat. "
+                    artista = songs[i]["track"]["artists"][j]["name"] + " feat "
+                elif j==1:
+                    artista = artista + songs[i]["track"]["artists"][j]["name"]
                 else:
-                    artista = artista + " , " + songs[i]["track"]["artists"][j]["name"]
+                    artista = artista + ", " +songs[i]["track"]["artists"][j]["name"] + " "
         else:
             artista = songs[i]["track"]["artists"][0]["name"]
         canzoni.append(canzone + " - " + artista)
@@ -44,7 +48,7 @@ async def scarica(input):
     allSearch = VideosSearch(titolo, limit = 2)
     diz = []
     diz = allSearch.result(mode = ResultMode.dict)
-    link = diz["result"][0]["link"]
+    link = diz["result"][1]["link"]
     test = await download(link)
     video = VideoFileClip(os.path.join(test))
     try:
@@ -52,21 +56,31 @@ async def scarica(input):
     except:
         pass
     video.audio.write_audiofile(os.path.join(path,"audio",input + ".mp3"), verbose=False, logger=None)
-    
+    return os.path.join(path,"audio",input + ".mp3")
+
 
 async def download(link):
     return YouTube(link).streams.filter().first().download(path)
     
 
 async def main():
-    id = input("Playlist url: ")
+    if len(sys.argv) != 2:
+        id = input("Playlist url: ")
+    else:
+        id = sys.argv[1]
     id = id.split("/")
     id = id[-1].split("?")[0]
     canzoni = await get_playlist(id)
     giuste = 0
     with Bar('Scarico...', max = len(canzoni)) as bar:
         for canzone in canzoni:
-            await scarica(canzone)
+            path = await scarica(canzone)
+            mp3 = MP3File(path)
+            try:
+                mp3.artist = canzone.split("-")[-1][:24]
+            except:
+                mp3.artist = canzone.split("-")[-1]
+            mp3.save()
             giuste += 1
             bar.next()
     bar.finish()
