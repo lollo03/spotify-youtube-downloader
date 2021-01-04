@@ -5,4 +5,7 @@ Iinstall requirements.txt and FFMPEG
 # Step 2
 Create a client_id and a client_secret on https://developer.spotify.com/dashboard/login and paste them into donwloader.py.
 # Step 3
-Simply launch the script and paste the playlist URL. The playlist must be public.
+Simply launch the script and paste the playlist URL. The playlist must be public.\
+Or simply use the command line:
+`python downloader.py URL` \
+The script will also try to werite metadata in the mp3 file
