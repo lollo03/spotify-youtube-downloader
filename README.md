@@ -8,4 +8,4 @@ Create a client_id and a client_secret on https://developer.spotify.com/dashboar
 Simply launch the script and paste the playlist URL. The playlist must be public.\
 Or simply use the command line:
 `python downloader.py URL` \
-The script will also try to werite metadata in the mp3 file
+The script will also try to write metadata in the mp3 file
