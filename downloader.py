@@ -12,8 +12,8 @@ import sys
 from mp3_tagger import MP3File, VERSION_BOTH
 
 path = os.path.abspath("pl-downloader")
-client_id = INSERT CLIENT ID
-client_secret = INSERT CLIENT SECRET
+client_id = ""
+client_secret = ""
 
 async def get_playlist(id):
     auth = client_id + ":" + client_secret
@@ -45,7 +45,10 @@ async def get_playlist(id):
 
 async def scarica(input):
     titolo = input + " lyrics"
-    allSearch = VideosSearch(titolo, limit = 2)
+    try:
+        allSearch = VideosSearch(titolo, limit = 2)
+    except:
+        return
     diz = []
     diz = allSearch.result(mode = ResultMode.dict)
     link = diz["result"][1]["link"]
@@ -55,7 +58,10 @@ async def scarica(input):
         os.mkdir(os.path.join(path,"audio"))
     except:
         pass
-    video.audio.write_audiofile(os.path.join(path,"audio",input + ".mp3"), verbose=False, logger=None)
+    try:
+        video.audio.write_audiofile(os.path.join(path,"audio",input + ".mp3"), verbose=False, logger=None)
+    except:
+        return
     return os.path.join(path,"audio",input + ".mp3")
 
 
@@ -75,12 +81,13 @@ async def main():
     with Bar('Scarico...', max = len(canzoni)) as bar:
         for canzone in canzoni:
             path = await scarica(canzone)
-            mp3 = MP3File(path)
-            try:
-                mp3.artist = canzone.split("-")[-1][:24]
-            except:
-                mp3.artist = canzone.split("-")[-1]
-            mp3.save()
+            if path:
+                mp3 = MP3File(path)
+                try:
+                    mp3.artist = canzone.split("-")[-1][:24]
+                except:
+                    mp3.artist = canzone.split("-")[-1]
+                mp3.save()
             giuste += 1
             bar.next()
     bar.finish()
