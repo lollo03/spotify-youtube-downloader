@@ -44,7 +44,7 @@ async def get_playlist(id):
     return(canzoni)
 
 async def scarica(input):
-    titolo = input + " lyrics"
+    titolo = input
     try:
         allSearch = VideosSearch(titolo, limit = 2)
     except:
